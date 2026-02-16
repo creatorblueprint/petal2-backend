@@ -3,7 +3,6 @@
   "version": "1.0.0",
   "description": "Petal AI Backend",
   "main": "index.js",
-  "type": "module",
   "scripts": {
     "start": "node index.js"
   },
