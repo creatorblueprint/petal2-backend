@@ -68,8 +68,10 @@ app.post("/chat", async (req, res) => {
     
     // Save chat message
     const newChat = new Chat({
-      userMessage: message,
+  userId: userId,
+  userMessage: message,
   botReply: "Petal will respond here 🌷"
+});
     });
     
     await newChat.save();
