@@ -1,6 +1,5 @@
 // ====== LOAD ENV VARIABLES ======
-import dotenv from "dotenv";
-dotenv.config();
+require("dotenv").config();
 // This allows us to use MONGO_URI from .env file
 
 // ====== IMPORT PACKAGES ======
