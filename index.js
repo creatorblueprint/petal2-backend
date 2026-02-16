@@ -69,19 +69,25 @@ app.post("/chat", async (req, res) => {
     user.messageCount += 1;
     await user.save();
     
-    // Save chat message
-    const newChat = new Chat({
+    // ===== Generate Gemini Reply =====
+const result = await model.generateContent(message);
+const response = await result.response;
+const text = response.text();
+
+// ===== Save chat with REAL reply =====
+const newChat = new Chat({
   userId: userId,
   userMessage: message,
-  botReply: "Petal will respond here 🌷"
+  botReply: text
 });
-    
-    await newChat.save();
-    
-    res.json({
-      reply: "Petal will respond here 🌷",
-      remaining: 5 - user.messageCount
-    });
+
+await newChat.save();
+
+// ===== Send reply to frontend =====
+res.json({
+  reply: text,
+  remaining: 5 - user.messageCount
+});
     
   } catch (err) {
     console.log(err);
