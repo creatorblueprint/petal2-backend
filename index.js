@@ -72,7 +72,6 @@ app.post("/chat", async (req, res) => {
   userMessage: message,
   botReply: "Petal will respond here 🌷"
 });
-    });
     
     await newChat.save();
     
