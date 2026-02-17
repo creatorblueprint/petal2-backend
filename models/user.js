@@ -1,11 +1,14 @@
 const mongoose = require("mongoose");
 
-// User Schema defines user tracking system
 const userSchema = new mongoose.Schema({
-  userId: {
+  email: {
     type: String,
     required: true,
     unique: true
+  },
+  password: {
+    type: String,
+    required: true
   },
   messageCount: {
     type: Number,
