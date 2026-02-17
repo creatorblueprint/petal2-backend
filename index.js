@@ -90,7 +90,22 @@ if (!user) {
     user.messageCount += 1;
     await user.save();
 
+// ===== LOAD USER CHAT MEMORY =====
+let chat = await Chat.findOne({ userId });
 
+if (!chat) {
+  chat = new Chat({
+    userId,
+    messages: []
+  });
+}
+
+// Push user message
+chat.messages.push({
+  role: "user",
+  content: message
+});
+    
     // ===== Fetch last 10 chats for memory =====
 const previousChats = await Chat.find({ userId })
   .sort({ createdAt: -1 })
@@ -124,16 +139,11 @@ Rules:
   }]
 });
 
-// Add memory
-previousChats.forEach(chat => {
+// Add previous messages
+chat.messages.forEach(msg => {
   conversation.push({
-    role: "user",
-    parts: [{ text: chat.userMessage }]
-  });
-
-  conversation.push({
-    role: "model",
-    parts: [{ text: chat.botReply }]
+    role: msg.role === "assistant" ? "model" : "user",
+    parts: [{ text: msg.content }]
   });
 });
 
@@ -154,24 +164,18 @@ const result = await model.generateContent({
 const response = await result.response;
 const text = response.text();
 
-// ===== Save chat with REAL reply =====
-const newChat = new Chat({
-  userId: userId,
-  userMessage: message,
-  botReply: text
+// Save assistant reply
+chat.messages.push({
+  role: "assistant",
+  content: text
 });
 
-await newChat.save();
-
-    // ===== 🌸 Keep only last 10 messages =====
-const chatCount = await Chat.countDocuments({ userId });
-
-if (chatCount > 10) {
-  const oldest = await Chat.findOne({ userId })
-    .sort({ createdAt: 1 });
-
-  await Chat.findByIdAndDelete(oldest._id);
+// Keep only last 10 messages
+if (chat.messages.length > 10) {
+  chat.messages = chat.messages.slice(-10);
 }
+
+await chat.save();
 
 
 // ===== Send reply to frontend =====
