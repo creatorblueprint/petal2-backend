@@ -118,6 +118,17 @@ const newChat = new Chat({
 
 await newChat.save();
 
+    // ===== 🌸 Keep only last 10 messages =====
+const chatCount = await Chat.countDocuments({ userId });
+
+if (chatCount > 10) {
+  const oldest = await Chat.findOne({ userId })
+    .sort({ createdAt: 1 });
+
+  await Chat.findByIdAndDelete(oldest._id);
+}
+
+
 // ===== Send reply to frontend =====
 res.json({
   reply: text,
