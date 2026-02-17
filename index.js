@@ -1,4 +1,4 @@
-// ====== LOAD ENV VARIABLES ======
+2// ====== LOAD ENV VARIABLES ======
 require("dotenv").config();
 // This allows us to use MONGO_URI from .env file
 
@@ -198,6 +198,7 @@ app.get("/", (req, res) => {
 app.post("/register", async (req, res) => {
   try {
     const { email, password } = req.body;
+    console.log("REQ BODY:", req.body);
     
     // Check if user already exists
     const existingUser = await User.findOne({ email });
