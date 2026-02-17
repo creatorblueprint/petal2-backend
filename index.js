@@ -18,6 +18,9 @@ const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
 const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash" });
 
 
+// ====== CREATE APP ======
+const app = express();
+
 
 // ===== AUTH MIDDLEWARE =====
 const authenticateToken = (req, res, next) => {
@@ -37,9 +40,6 @@ const authenticateToken = (req, res, next) => {
   }
 };
 
-
-// ====== CREATE APP ======
-const app = express();
 
 // ====== MIDDLEWARE ======
 app.use(cors());
