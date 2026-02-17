@@ -1,11 +1,17 @@
 const mongoose = require("mongoose");
 
-// Chat Schema defines how chat data will look in database
 const chatSchema = new mongoose.Schema({
-  userId: { type: String, required: true },
-  userMessage: { type: String, required: true },
-  botReply: { type: String, required: true }
-}, { timestamps: true });
+  userId: {
+    type: mongoose.Schema.Types.ObjectId,
+    required: true,
+    unique: true
+  },
+  messages: [
+    {
+      role: String,
+      content: String
+    }
+  ]
+});
 
-// Export model
 module.exports = mongoose.model("Chat", chatSchema);
