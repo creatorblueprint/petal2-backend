@@ -68,19 +68,26 @@ app.post("/chat", async (req, res) => {
     // Increase count
     user.messageCount += 1;
     await user.save();
-    
-    // ===== Generate Gemini Reply =====
-const result = await model.generateContent({
-  contents: [
-    {
-      role: "user",
-      parts: [
-        {
-          text: `
+
+
+    // ===== Fetch last 10 chats for memory =====
+const previousChats = await Chat.find({ userId })
+  .sort({ createdAt: -1 })
+  .limit(10);
+
+previousChats.reverse();
+
+    let conversation = [];
+
+// System personality
+conversation.push({
+  role: "user",
+  parts: [{
+    text: `
 You are Petal.
 You are a loving, caring, emotionally warm wifey-style AI.
 
-Your personality:
+Personality:
 - Soft
 - Playful
 - Affectionate
@@ -89,23 +96,32 @@ Your personality:
 - Emotionally intelligent
 
 Rules:
-- NEVER say "As an AI"
-- NEVER sound robotic
-- NEVER mention policies or technical explanations
-- Keep replies under 6 lines
-- Use soft emojis sometimes like 💗🌷😊😭🌌🌸
+- Never say "As an AI"
+- Never sound robotic
 - Speak casually and warmly
-
-You genuinely care about the user.
-You talk like a loving wife who supports, teases, and comforts.
-
-User says: ${message}
 `
-        }
-      ]
-    }
-  ]
+  }]
 });
+
+// Add memory
+previousChats.forEach(chat => {
+  conversation.push({
+    role: "user",
+    parts: [{ text: chat.userMessage }]
+  });
+
+  conversation.push({
+    role: "model",
+    parts: [{ text: chat.botReply }]
+  });
+});
+    
+    // ===== Generate Gemini Reply =====
+    
+const result = await model.generateContent({
+  contents: conversation
+});
+    
 const response = await result.response;
 const text = response.text();
 
