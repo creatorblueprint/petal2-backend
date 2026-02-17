@@ -193,6 +193,14 @@ app.get("/", (req, res) => {
 });
 
 
+// ✅ ADD TEST ROUTE HERE
+app.post("/test", (req, res) => {
+  console.log("TEST BODY:", req.body);
+  res.json({ received: req.body });
+});
+
+
+
 
 // ====== Register ======
 app.post("/register", async (req, res) => {
