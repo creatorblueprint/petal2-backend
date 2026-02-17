@@ -17,6 +17,27 @@ const { GoogleGenerativeAI } = require("@google/generative-ai");
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
 const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash" });
 
+
+
+// ===== AUTH MIDDLEWARE =====
+const authenticateToken = (req, res, next) => {
+  const authHeader = req.headers["authorization"];
+  const token = authHeader && authHeader.split(" ")[1];
+
+  if (!token) {
+    return res.status(401).json({ message: "Access denied" });
+  }
+
+  try {
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    req.userId = decoded.userId;
+    next();
+  } catch (err) {
+    return res.status(403).json({ message: "Invalid token" });
+  }
+};
+
+
 // ====== CREATE APP ======
 const app = express();
 
@@ -34,21 +55,20 @@ mongoose.connect(process.env.MONGO_URI)
 
 
 // ===== CHAT ROUTE WITH DAILY LIMIT =====
-app.post("/chat", async (req, res) => {
+app.post("/chat", authenticateToken, async (req, res) => {
   try {
-    const { userId, message } = req.body;
+    const { message } = req.body;
+const userId = req.userId;
     
     if (!userId || !message) {
       return res.status(400).json({ error: "Missing data" });
     }
     
-    let user = await User.findOne({ userId });
-    
-    // If new user, create one
-    if (!user) {
-      user = new User({ userId });
-      await user.save();
-    }
+    let user = await User.findOne({ _id: userId });
+
+if (!user) {
+  return res.status(404).json({ error: "User not found" });
+}
     
     // Reset daily counter if new day
     const today = new Date();
