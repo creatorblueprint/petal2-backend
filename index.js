@@ -115,6 +115,14 @@ previousChats.forEach(chat => {
     parts: [{ text: chat.botReply }]
   });
 });
+
+
+// Add current user message
+conversation.push({
+  role: "user",
+  parts: [{ text: message }]
+});
+    
     
     // ===== Generate Gemini Reply =====
     
