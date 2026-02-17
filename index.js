@@ -6,7 +6,8 @@ require("dotenv").config();
 const express = require("express");
 const mongoose = require("mongoose");
 const cors = require("cors");
-
+const bcrypt = require("bcryptjs");
+const jwt = require("jsonwebtoken");
 
 // ===== IMPORT MODELS =====
 const Chat = require("./models/chat");
