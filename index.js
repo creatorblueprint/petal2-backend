@@ -120,7 +120,7 @@ previousChats.reverse();
 
 // System personality
 conversation.push({
-  role: "system",
+  role: "user",
   parts: [{
     text: `
 You are Petal.
