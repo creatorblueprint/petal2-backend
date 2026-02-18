@@ -17,7 +17,11 @@ const userSchema = new mongoose.Schema({
   lastReset: {
     type: Date,
     default: Date.now
-  }
+  },
+  plan: {
+  type: String,
+  default: "free"
+}
 });
 
 module.exports = mongoose.model("User", userSchema);
