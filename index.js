@@ -78,13 +78,16 @@ if (!user) {
       user.messageCount = 0;
       user.lastReset = today;
     }
-    
-    // Check limit
-    if (user.messageCount >= 5) {
-      return res.status(403).json({
-        error: "Daily limit reached. Come back tomorrow 🌷"
-      });
-    }
+
+    // Daily Limit
+const dailyLimit = user.plan === "pro" ? Infinity : 5;
+
+// Check limit
+if (user.messageCount >= dailyLimit) {
+  return res.status(403).json({
+    error: "Daily limit reached. Come back tomorrow 🌷"
+  });
+}
     
     // Increase count
     user.messageCount += 1;
