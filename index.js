@@ -128,22 +128,9 @@ if (!chat) {
   });
 }
 
-// Push user message
-chat.messages.push({
-  role: "user",
-  content: message
-});
+// 🔥 ADD THIS HERE
+let conversation = [];
     
-    // ===== Fetch last 10 chats for memory =====
-const previousChats = await Chat.find({ userId })
-  .sort({ createdAt: -1 })
-  .limit(10);
-
-previousChats.reverse();
-
-    let conversation = [];
-
-
 // Add previous messages
 chat.messages.forEach(msg => {
   conversation.push({
@@ -246,11 +233,17 @@ HUMAN BEHAVIOR RULES:
     
 const response = await result.response;
 const text = response.text();
+    
+// Save user message
+chat.messages.push({
+   role: "user",
+   content: message
+});
 
 // Save assistant reply
 chat.messages.push({
-  role: "assistant",
-  content: text
+   role: "assistant",
+   content: text
 });
 
 // Keep only last 10 messages
@@ -280,16 +273,6 @@ res.json({
 app.get("/", (req, res) => {
   res.send("Petal Backend is running 🌷");
 });
-
-
-// ✅ ADD TEST ROUTE HERE
-app.post("/test", (req, res) => {
-  console.log("TEST BODY:", req.body);
-  res.json({ received: req.body });
-});
-
-
-
 
 // ====== Register ======
 app.post("/register", async (req, res) => {
