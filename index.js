@@ -263,12 +263,14 @@ res.json({
 });
     
   } catch (err) {
-   console.log("FULL ERROR:");
    console.log(err);
-   console.log("ERROR MESSAGE:");
-   console.log(err.message);
 
-   res.status(500).json({ error: err.message || "Server error" });
+   // If Gemini returns 429 (quota exceeded)
+   if (err.status === 429 || err.message?.includes("429")) {
+      return res.status(429).json({ error: "LIMIT_REACHED" });
+   }
+
+   res.status(500).json({ error: "Server error" });
 }
 });
 
