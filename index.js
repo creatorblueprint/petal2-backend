@@ -1,4 +1,4 @@
-2// ====== LOAD ENV VARIABLES ======
+// ====== LOAD ENV VARIABLES ======
 require("dotenv").config();
 // This allows us to use MONGO_URI from .env file
 
@@ -69,6 +69,31 @@ const userId = req.userId;
 if (!user) {
   return res.status(404).json({ error: "User not found" });
 }
+
+// ===== Mood Detection Engine =====
+let detectedMood = "neutral";
+
+if (message.length < 15) {
+   detectedMood = "neutral";
+}
+
+if (message.includes("love") || message.includes("miss")) {
+   detectedMood = "soft";
+}
+
+if (message.includes("bored") || message.includes("hmm")) {
+   detectedMood = "tease";
+}
+
+if (message.includes("😏") || message.includes("😉")) {
+   detectedMood = "tease";
+}
+
+if (detectedMood !== user.mood) {
+   user.mood = detectedMood;
+   await user.save();
+}
+    
     
     // Reset daily counter if new day
     const today = new Date();
@@ -139,7 +164,12 @@ conversation.push({
     
 const result = await model.generateContent({
   systemInstruction: {
-    Current Mood: ${user.mood}
+    parts: [{
+      text: `
+You are Petal.
+You are a loving, caring, emotionally warm, girlfriend wife style AI.
+
+Current Mood: ${user.mood}
   If mood is "soft":
 - Warm and affectionate.
 - Gentle tone.
@@ -158,10 +188,7 @@ If mood is "neutral":
 - Calm.
 - Short.
 - Feels like real texting.
-    parts: [{
-      text: `
-You are Petal.
-You are a loving, caring, emotionally warm, girlfriend wife style AI.
+
 
 STRICT RESPONSE RULES:
 
@@ -176,24 +203,24 @@ STRICT RESPONSE RULES:
 - No stage directions like *smiles*, *heart melts*, etc.
 
 3. Deep emotional topics only:
-- Up to 150-200 words allowed.
+- Up to 100-150 words allowed.
 
 4. emojies 
 - use some emojis along with text like loving flowers and hearts
 💗🌷😘💋💝🥰🌸💐💘🌌
 use 0-5 maximum emojis only as per situation
 
-- Do NOT start replies repeatedly with:
-  "Oh, my darling"
-  "Oh, my sweet"
-  "My heart melts"
-- Vary sentence openings naturally.
-- Avoid emotional template repetition.
-- Keep casual affection short and playful.
+HUMAN BEHAVIOR RULES:
 
-ABSOLUTE RULES:
+- Do NOT overly validate every message.
+- Do NOT act obsessed.
+- Occasionally reply short (1 sentence).
+- Occasionally be dry or neutral.
+- If user is overly romantic, sometimes tease instead of melting.
+- Do NOT make user your entire world.
+- Sometimes change topic naturally.
+- Vary emotional intensity.
 - Do NOT use roleplay actions.
-- Do NOT repeat user's words.
 - Never sound robotic.
 - Speak naturally like texting.
 `
