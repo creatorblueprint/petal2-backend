@@ -21,6 +21,10 @@ const userSchema = new mongoose.Schema({
   plan: {
   type: String,
   default: "free"
+},
+  mood: {
+  type: String,
+  default: "soft"
 }
 });
 
