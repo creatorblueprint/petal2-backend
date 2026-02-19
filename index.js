@@ -263,9 +263,13 @@ res.json({
 });
     
   } catch (err) {
-    console.log(err);
-    res.status(500).json({ error: "Server error" });
-  }
+   console.log("FULL ERROR:");
+   console.log(err);
+   console.log("ERROR MESSAGE:");
+   console.log(err.message);
+
+   res.status(500).json({ error: err.message || "Server error" });
+}
 });
 
 
