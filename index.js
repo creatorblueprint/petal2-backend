@@ -274,6 +274,25 @@ res.json({
 }
 });
 
+// ===== FETCH USER CHAT =====
+app.get("/chat", authenticateToken, async (req, res) => {
+  try {
+    const userId = req.userId;
+
+    const chat = await Chat.findOne({ userId });
+
+    if (!chat) {
+      return res.json({ messages: [] });
+    }
+
+    res.json(chat);
+
+  } catch (err) {
+    res.status(500).json({ error: "Server error" });
+  }
+});
+
+
 
 // ====== BASIC TEST ROUTE ======
 app.get("/", (req, res) => {
