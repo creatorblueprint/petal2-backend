@@ -131,8 +131,10 @@ if (!chat) {
 // 🔥 ADD THIS HERE
 let conversation = [];
     
-// Add previous messages
-chat.messages.forEach(msg => {
+// Send only last 10 messages to Gemini
+const recentMessages = chat.messages.slice(-10);
+
+recentMessages.forEach(msg => {
   conversation.push({
     role: msg.role === "assistant" ? "model" : "user",
     parts: [{ text: msg.content }]
@@ -246,10 +248,12 @@ chat.messages.push({
    content: text
 });
 
-// Keep only last 10 messages
-if (chat.messages.length > 10) {
-  chat.messages = chat.messages.slice(-10);
+
+// Keep only last 100 messages in Mongo
+if (chat.messages.length > 100) {
+  chat.messages = chat.messages.slice(-100);
 }
+
 
 await chat.save();
 
@@ -274,19 +278,20 @@ res.json({
 }
 });
 
+
 // ===== FETCH USER CHAT =====
 app.get("/chat", authenticateToken, async (req, res) => {
   try {
     const userId = req.userId;
-
+    
     const chat = await Chat.findOne({ userId });
-
+    
     if (!chat) {
       return res.json({ messages: [] });
     }
-
+    
     res.json(chat);
-
+    
   } catch (err) {
     res.status(500).json({ error: "Server error" });
   }
