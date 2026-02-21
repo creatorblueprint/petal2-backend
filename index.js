@@ -150,6 +150,20 @@ if (!chat) {
 
 // 🔥 ADD THIS HERE
 let conversation = [];
+
+
+// ===== Inject Permanent Memories =====
+if (user.memories && user.memories.length > 0) {
+  user.memories.forEach(mem => {
+    conversation.push({
+      role: "user",
+      parts: [{
+        text: "Important permanent memory about me: " + mem.content
+      }]
+    });
+  });
+}
+    
     
 // Send only last 10 messages to Gemini
 const recentMessages = chat.messages.slice(-10);
