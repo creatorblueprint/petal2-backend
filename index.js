@@ -70,6 +70,26 @@ if (!user) {
   return res.status(404).json({ error: "User not found" });
 }
 
+// ===== Permanent Memory Save Detection =====
+if (message.toLowerCase().startsWith("remember ")) {
+
+  const memoryContent = message.substring(9).trim();
+
+  if (memoryContent.length > 0) {
+
+    user.memories.push({
+      content: memoryContent
+    });
+
+    await user.save();
+
+    return res.json({
+      reply: "Okay… I’ll remember that forever. 💗"
+    });
+  }
+}
+    
+
 // ===== Mood Detection Engine =====
 let detectedMood = "neutral";
 
