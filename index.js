@@ -70,16 +70,25 @@ if (!user) {
   return res.status(404).json({ error: "User not found" });
 }
 
-// ===== Permanent Memory Save Detection =====
+    // permanent memory//
 if (message.toLowerCase().startsWith("remember ")) {
 
   const memoryContent = message.substring(9).trim();
 
   if (memoryContent.length > 0) {
 
-if (!user.memories) {
-  user.memories = [];
-}
+    if (!user.memories) {
+      user.memories = [];
+    }
+
+    // 🔴 LIMIT CHECK
+    if (user.memories.length >= 5) {
+      return res.json({
+        memoryLimitReached: true,
+        memories: user.memories,
+        reply: "You’ve reached your 5 permanent memories limit. 💗 Delete one to save a new one."
+      });
+    }
 
     user.memories.push({
       content: memoryContent
@@ -88,7 +97,7 @@ if (!user.memories) {
     await user.save();
 
     return res.json({
-      reply: "Okay… I’ll remember that forever. 💗"
+      reply: "Saved. I’ll remember that forever. 💗"
     });
   }
 }
@@ -420,6 +429,33 @@ app.post("/login", async (req, res) => {
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: "Server error" });
+  }
+});
+
+//permanent memory delete//
+app.post("/delete-memory", authenticateToken, async (req, res) => {
+  try {
+    const userId = req.userId;
+    const { index } = req.body;
+
+    let user = await User.findById(userId);
+
+    if (!user || !user.memories) {
+      return res.status(400).json({ error: "No memories found" });
+    }
+
+    if (index < 0 || index >= user.memories.length) {
+      return res.status(400).json({ error: "Invalid memory index" });
+    }
+
+    user.memories.splice(index, 1);
+    await user.save();
+
+    res.json({ success: true, memories: user.memories });
+
+  } catch (err) {
+    console.log(err);
+    res.status(500).json({ error: "Server error" });
   }
 });
 
