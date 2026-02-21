@@ -459,6 +459,13 @@ app.post("/delete-memory", authenticateToken, async (req, res) => {
   }
 });
 
+//sidebar delete//
+app.get("/get-memories", authenticateToken, async (req, res) => {
+  const user = await User.findById(req.userId);
+  res.json({ memories: user.memories || [] });
+});
+
+      
       
 // ====== START SERVER ======
 const PORT = process.env.PORT || 5000;
