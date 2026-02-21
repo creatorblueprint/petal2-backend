@@ -459,9 +459,14 @@ app.post("/delete-memory", authenticateToken, async (req, res) => {
   }
 });
 
-//sidebar delete//
+//Get memory//
 app.get("/get-memories", authenticateToken, async (req, res) => {
   const user = await User.findById(req.userId);
+
+  if (!user) {
+    return res.status(404).json({ error: "User not found" });
+  }
+
   res.json({ memories: user.memories || [] });
 });
 
