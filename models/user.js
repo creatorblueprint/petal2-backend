@@ -26,15 +26,19 @@ const userSchema = new mongoose.Schema({
   type: String,
   default: "soft"
 },
-  memories: [
-  {
-    content: String,
-    createdAt: {
-      type: Date,
-      default: Date.now
-    }
+  memories: {
+    type: [
+      {
+        content: String,
+        createdAt: {
+          type: Date,
+          default: Date.now
+        }
+      }
+    ],
+    default: []
   }
-],
+
 });
 
 module.exports = mongoose.model("User", userSchema);
