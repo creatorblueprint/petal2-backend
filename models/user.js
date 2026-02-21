@@ -25,7 +25,16 @@ const userSchema = new mongoose.Schema({
   mood: {
   type: String,
   default: "soft"
-}
+},
+  memories: [
+  {
+    content: String,
+    createdAt: {
+      type: Date,
+      default: Date.now
+    }
+  }
+],
 });
 
 module.exports = mongoose.model("User", userSchema);
