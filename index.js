@@ -77,6 +77,10 @@ if (message.toLowerCase().startsWith("remember ")) {
 
   if (memoryContent.length > 0) {
 
+if (!user.memories) {
+  user.memories = [];
+}
+
     user.memories.push({
       content: memoryContent
     });
