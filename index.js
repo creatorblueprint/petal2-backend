@@ -567,11 +567,13 @@ app.get("/me", authenticateToken, async (req, res) => {
     const user = await User.findById(req.userId).select("-password");
     if (!user) return res.status(404).json({ error: "User not found" });
     
-    res.json({
-      plan: user.plan,
-      expiry: user.planExpiry,
-      permanentMemoryLimit: user.permanentMemoryLimit
-    });
+     res.json({
+  plan: user.plan,
+  expiry: user.planExpiry,
+  permanentMemoryLimit: user.permanentMemoryLimit,
+  messageCount: user.messageCount,
+  lastReset: user.lastReset
+});
     
   } catch (err) {
     res.status(500).json({ error: "Failed to fetch user" });
