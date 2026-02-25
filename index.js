@@ -150,13 +150,14 @@ if (detectedMood !== user.mood) {
     
     
     // Reset daily counter if new day
-    const today = new Date();
-    const lastReset = new Date(user.lastReset);
-    
-    if (today.toDateString() !== lastReset.toDateString()) {
-      user.messageCount = 0;
-      user.lastReset = today;
-    }
+const today = new Date();
+const lastReset = new Date(user.lastReset);
+
+if (today.toDateString() !== lastReset.toDateString()) {
+  user.messageCount = 0;
+  user.lastReset = today;
+  await user.save(); // save reset immediately
+}
 
 
     
