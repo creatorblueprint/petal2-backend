@@ -246,7 +246,14 @@ let success = false;
 for (let modelName of modelPriority) {
   try {
     
-    const model = genAI.getGenerativeModel({ model: modelName });
+    const model = genAI.getGenerativeModel({
+  model: modelName,
+  generationConfig: {
+    temperature: 0.9,
+    topP: 0.9,
+    maxOutputTokens: 250
+  }
+});
     
     const result = await model.generateContent({
       systemInstruction: {
