@@ -655,7 +655,7 @@ if (plan === "premium") {
 
 user.planExpiry = expiryDate;
 
-if (!user.paymentHistory) {
+if (!Array.isArray(user.paymentHistory)) {
   user.paymentHistory = [];
 }
 
