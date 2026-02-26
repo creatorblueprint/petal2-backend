@@ -248,11 +248,6 @@ for (let modelName of modelPriority) {
     
     const model = genAI.getGenerativeModel({
   model: modelName,
-  generationConfig: {
-    temperature: 0.9,
-    topP: 0.9,
-    maxOutputTokens: 250
-  }
 });
     
     const result = await model.generateContent({
